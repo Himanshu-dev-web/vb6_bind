@@ -1,0 +1,204 @@
+[Root]
+Most Recent Package=Standard Setup Package 1
+
+
+[Package|Standard Setup Package 1|Root]
+SubWizProgID=PDWizard.SetupPkgSubWiz
+BuildFolder=d:\package
+
+[Package|Standard Setup Package 1|Configure DAO ISAMs]
+Applicable=No
+
+[Package|Standard Setup Package 1|Configure DAO ODBC]
+JetWorkspace=
+ODBCDirect=
+
+[Package|Standard Setup Package 1|Files Found]
+
+[Package|Standard Setup Package 1|Files Released]
+SSCSDK80.DLL=
+u2LBAR.DLL=
+u25TOTAL.DLL=
+u25STORE.DLL=
+p2BBND.DLL=
+p2BBDE.DLL=
+Crystal=
+
+[Package|Standard Setup Package 1|Missing Dependency Information]
+D:\WINDOWS\system32\Vsflex7.ocx=
+D:\Program Files\Common Files\System\ado\msado20.tlb=
+
+[Package|Standard Setup Package 1|Out-of-Date Dependency Information]
+D:\WINDOWS\system32\Mscomctl.ocx=
+D:\WINDOWS\system32\scrrun.dll=
+
+[Package|Standard Setup Package 1|Files Added]
+
+[Package|Standard Setup Package 1|Files Removed]
+
+[Package|Standard Setup Package 1|Files In Project]
+G:\jksteel_payment\JKStore.exe=Yes
+D:\WINDOWS\system32\msvbvm60.dll=Yes
+D:\WINDOWS\system32\oleaut32.dll=Yes
+D:\WINDOWS\system32\olepro32.dll=Yes
+D:\WINDOWS\system32\asycfilt.dll=Yes
+D:\WINDOWS\system32\stdole2.tlb=Yes
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\COMCAT.DLL=Yes
+D:\Program Files\Common Files\System\ado\msado20.tlb=Yes
+D:\WINDOWS\system32\scrrun.dll=Yes
+D:\WINDOWS\system32\msvcrt.dll=Yes
+D:\WINDOWS\system32\TABCTL32.OCX=Yes
+D:\WINDOWS\system32\Vsflex7.ocx=Yes
+D:\WINDOWS\system32\COMCT232.OCX=Yes
+D:\WINDOWS\system32\MSMASK32.OCX=Yes
+D:\WINDOWS\system32\MSCOMCT2.OCX=Yes
+D:\WINDOWS\system32\Mscomctl.ocx=Yes
+D:\WINDOWS\system32\Crystl32.OCX=Yes
+D:\WINDOWS\system32\crpe32.dll=Yes
+D:\WINDOWS\system32\Implode.dll=Yes
+D:\WINDOWS\system32\Crpaig80.dll=Yes
+D:\WINDOWS\system32\mfc42.dll=Yes
+D:\WINDOWS\Crystal\Crxlat32.dll=Yes
+D:\WINDOWS\system32\p2bdao.dll=Yes
+D:\WINDOWS\Crystal\p2bxbse.dll=Yes
+D:\WINDOWS\system32\p2ctdao.dll=Yes
+D:\WINDOWS\system32\p2irdao.dll=Yes
+D:\WINDOWS\Crystal\p2sifmx.dll=Yes
+D:\WINDOWS\system32\P2smon.dll=Yes
+D:\WINDOWS\system32\p2sodbc.dll=Yes
+D:\WINDOWS\Crystal\p2sora7.dll=Yes
+D:\WINDOWS\Crystal\p2ssql.dll=Yes
+D:\WINDOWS\Crystal\p2ssyb10.dll=Yes
+D:\WINDOWS\Crystal\p2soledb.dll=Yes
+D:\WINDOWS\Crystal\u2ddisk.dll=Yes
+D:\WINDOWS\Crystal\u2dmapi.dll=Yes
+D:\WINDOWS\Crystal\u2dnotes.dll=Yes
+D:\WINDOWS\Crystal\u2dpost.dll=Yes
+D:\WINDOWS\Crystal\u2dvim.dll=Yes
+D:\WINDOWS\Crystal\u2dapp.dll=Yes
+D:\WINDOWS\Crystal\u2fcr.dll=Yes
+D:\WINDOWS\Crystal\u2fhtml.dll=Yes
+D:\WINDOWS\Crystal\u2fodbc.dll=Yes
+D:\WINDOWS\Crystal\u2frec.dll=Yes
+D:\WINDOWS\Crystal\u2frtf.dll=Yes
+D:\WINDOWS\Crystal\u2fsepv.dll=Yes
+D:\WINDOWS\Crystal\u2ftext.dll=Yes
+D:\WINDOWS\Crystal\u2fwks.dll=Yes
+D:\WINDOWS\Crystal\u2fwordw.dll=Yes
+D:\WINDOWS\Crystal\u2fxls.dll=Yes
+D:\WINDOWS\Crystal\u25dts.dll=Yes
+D:\WINDOWS\Crystal\u2l2000.dll=Yes
+D:\WINDOWS\Crystal\u2lcom.dll=Yes
+D:\WINDOWS\Crystal\u2ldts.dll=Yes
+D:\WINDOWS\Crystal\u2lsamp1.dll=Yes
+D:\WINDOWS\Crystal\u252000.dll=Yes
+D:\WINDOWS\system32\MSDATLST.OCX=Yes
+D:\WINDOWS\system32\MSADODC.OCX=Yes
+D:\WINDOWS\system32\MSSTDFMT.DLL=Yes
+D:\WINDOWS\system32\MSBIND.DLL=Yes
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP.EXE=Yes
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP1.EXE=Yes
+D:\WINDOWS\system32\VB6STKIT.DLL=Yes
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\ST6UNST.EXE=Yes
+
+[Package|Standard Setup Package 1|Configure Registry Files]
+Applicable=No
+
+[Package|Standard Setup Package 1|Configure Remote Servers]
+Applicable=No
+
+[Package|Standard Setup Package 1|Install Locations]
+G:\jksteel_payment\JKStore.exe=$(AppPath)
+D:\WINDOWS\system32\msvbvm60.dll=$(WinSysPathSysFile)
+D:\WINDOWS\system32\oleaut32.dll=$(WinSysPathSysFile)
+D:\WINDOWS\system32\olepro32.dll=$(WinSysPathSysFile)
+D:\WINDOWS\system32\asycfilt.dll=$(WinSysPathSysFile)
+D:\WINDOWS\system32\stdole2.tlb=$(WinSysPathSysFile)
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\COMCAT.DLL=$(WinSysPathSysFile)
+D:\Program Files\Common Files\System\ado\msado20.tlb=$(WinSysPath)
+D:\WINDOWS\system32\scrrun.dll=$(WinSysPath)
+D:\WINDOWS\system32\msvcrt.dll=$(WinSysPathSysFile)
+D:\WINDOWS\system32\TABCTL32.OCX=$(WinSysPath)
+D:\WINDOWS\system32\Vsflex7.ocx=$(WinSysPath)
+D:\WINDOWS\system32\COMCT232.OCX=$(WinSysPath)
+D:\WINDOWS\system32\MSMASK32.OCX=$(WinSysPath)
+D:\WINDOWS\system32\MSCOMCT2.OCX=$(WinSysPath)
+D:\WINDOWS\system32\Mscomctl.ocx=$(WinSysPath)
+D:\WINDOWS\system32\Crystl32.OCX=$(WinSysPath)
+D:\WINDOWS\system32\crpe32.dll=$(WinSysPath)
+D:\WINDOWS\system32\Implode.dll=$(AppPath)
+D:\WINDOWS\system32\Crpaig80.dll=$(WinSysPath)
+D:\WINDOWS\system32\mfc42.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\Crxlat32.dll=$(WinSysPath)
+D:\WINDOWS\system32\p2bdao.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\p2bxbse.dll=$(WinSysPath)
+D:\WINDOWS\system32\p2ctdao.dll=$(WinSysPath)
+D:\WINDOWS\system32\p2irdao.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\p2sifmx.dll=$(WinSysPath)
+D:\WINDOWS\system32\P2smon.dll=$(WinSysPath)
+D:\WINDOWS\system32\p2sodbc.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\p2sora7.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\p2ssql.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\p2ssyb10.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\p2soledb.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\u2ddisk.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\u2dmapi.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\u2dnotes.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\u2dpost.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\u2dvim.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\u2dapp.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\u2fcr.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\u2fhtml.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\u2fodbc.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\u2frec.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\u2frtf.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\u2fsepv.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\u2ftext.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\u2fwks.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\u2fwordw.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\u2fxls.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\u25dts.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\u2l2000.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\u2lcom.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\u2ldts.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\u2lsamp1.dll=$(WinSysPath)
+D:\WINDOWS\Crystal\u252000.dll=$(WinSysPath)
+D:\WINDOWS\system32\MSDATLST.OCX=$(WinSysPath)
+D:\WINDOWS\system32\MSADODC.OCX=$(WinSysPath)
+D:\WINDOWS\system32\MSSTDFMT.DLL=$(WinSysPath)
+D:\WINDOWS\system32\MSBIND.DLL=$(WinSysPath)
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP.EXE=$(AppPath)
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP1.EXE=$(WinPath)
+D:\WINDOWS\system32\VB6STKIT.DLL=$(WinSysPathSysFile)
+D:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\ST6UNST.EXE=$(WinPath)
+
+[Package|Standard Setup Package 1|Configure Shared Files]
+Applicable=Yes
+G:\jksteel_payment\JKStore.exe=No
+D:\WINDOWS\system32\Implode.dll=No
+
+[Package|Standard Setup Package 1|Distribution]
+Type=single
+Size=
+Title=JKStore
+
+[Package|Standard Setup Package 1|IconGroups]
+Group0=JKSTEEL
+PrivateGroup0=True
+Parent0=$(Programs)
+
+[Package|Standard Setup Package 1|JKSTEEL]
+Icon1=JKStore.exe
+Title1=JKSTEEL
+StartIn1=$(AppPath)
+Key1=Icon1
+
+[Package|Standard Setup Package 1|Package]
+PackageFolder=d:\package
+ProjectFolder=G:\jksteel_payment
+ServerSideCab=
+File1=d:\package\setup.exe
+File2=d:\package\Setup.Lst
+File3=d:\package\JKStore.CAB
+Handler1=PDWizard.FolderDplySubWiz
+Handler2=PDWizard.WebPostDplySubWiz

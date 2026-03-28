@@ -1,0 +1,21 @@
+Line 24: Class Crystal.CrystalReport of control cr was not a loaded control class.
+Line 40: Class MSComCtl2.DTPicker of control FromDate was not a loaded control class.
+Line 54: Class MSComCtl2.DTPicker of control todate was not a loaded control class.
+Line 27: The property name _ExtentX in cr is invalid.
+Line 28: The property name _ExtentY in cr is invalid.
+Line 29: The property name _Version in cr is invalid.
+Line 30: The property name PrintFileLinesPerPage in cr is invalid.
+Line 46: The property name _ExtentX in FromDate is invalid.
+Line 47: The property name _ExtentY in FromDate is invalid.
+Line 48: The property name _Version in FromDate is invalid.
+Line 49: The property name CustomFormat in FromDate is invalid.
+Line 50: The property name Format in FromDate is invalid.
+Line 51: The property name UpDown in FromDate is invalid.
+Line 52: The property name CurrentDate in FromDate is invalid.
+Line 60: The property name _ExtentX in todate is invalid.
+Line 61: The property name _ExtentY in todate is invalid.
+Line 62: The property name _Version in todate is invalid.
+Line 63: The property name CustomFormat in todate is invalid.
+Line 64: The property name Format in todate is invalid.
+Line 65: The property name UpDown in todate is invalid.
+Line 66: The property name CurrentDate in todate is invalid.

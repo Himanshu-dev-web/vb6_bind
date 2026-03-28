@@ -1,0 +1,13 @@
+Order of the item description
+1.Group
+2.item name
+3.weight
+4.rate
+
+
+
+a)in the isue item form add group name in place of nerration.
+b)if a customer is returning some items then where will the entries will be made.
+c)while returning the excess amount in the recipt form as -amount, the amount should
+ be shown in the debit column and not in the 
+credit column. 
