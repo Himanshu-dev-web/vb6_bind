@@ -66,111 +66,191 @@ If FNAME = "DEVA BOOK BINDING HOUSE" Then
 End If
 
 End Function
+' =========================
+' ?? CHANGE DATE HERE ONLY
+' =========================
+Public Function GetCurrentDate() As Date
+
+    ' ?? NORMAL MODE (production)
+    GetCurrentDate = Date
+
+    ' ?? TEST CASES (uncomment ONE at a time)
+
+    'GetCurrentDate = Date + 350   ' far from expiry
+    'GetCurrentDate = Date + 360   ' near expiry (warning should come)
+    'GetCurrentDate = Date + 364   ' last day warning
+    'GetCurrentDate = Date + 366   ' expired ? should ask key
+
+    ' ?? OR fixed testing date
+    'GetCurrentDate = #03/25/2027#
+    
+End Function
+
+
+' =========================
+' ?? MAIN LICENSE CHECK
+' =========================
 Public Function check_session() As String
-Dim d1 As Integer
-Dim expDate As String
-Dim userKey As String
-Dim attempts As Integer
 
-If ch_ = True And chk_done = False Then
-    chk_done = True
+    Dim expDateStr As String
+    Dim expDate As Date
+    Dim d1 As Integer
+    Dim userKey As String
 
-    ReadLicense expDate, attempts
+    Call ReadLicense(expDateStr)
     
-    d1 = DateDiff("d", Date, CDate(expDate))
-    
-    ' Before expiry - show days remaining warning
-    If d1 >= 0 And d1 <= 16 Then
-        MsgBox "Software will expire in " & d1 & " days!" & vbNewLine & _
-               "Please contact your vendor for renewal.", vbExclamation
+    ' ?? Safe conversion
+    If IsDate(expDateStr) Then
+        expDate = CDate(expDateStr)
+    Else
+        expDate = CDate("03/31/2027")
+        SaveLicense Format(expDate, "DD-MMM-YYYY")
     End If
-    
-    ' After expiry - directly ask for renewal key
+
+    d1 = DateDiff("d", GetCurrentDate(), expDate)
+
+   
+
+    ' ?? WARNING
+    If d1 >= 0 And d1 <= 15 Then
+        MsgBox "Software will expire in " & d1 & " days!", vbExclamation
+    End If
+
+    ' ? EXPIRED
     If d1 < 0 Then
-        userKey = InputBox("License Expired on 31/03/2027!" & vbNewLine & _
-                   "Enter Renewal Key to continue:", "Renewal Required")
-        If VerifyRenewalKey(userKey) Then
-            expDate = Format(DateAdd("d", 365, Date), "MM/DD/YYYY")
-            SaveLicense expDate, 0
-            ch_ = False
-            check_session = ""
-            MsgBox "Renewed! Valid till: " & expDate, vbInformation
-        Else
-            MsgBox "Invalid Key! Contact your vendor.", vbCritical
-            check_session = "Please renew software license..."
+        
+        userKey = InputBox("License Expired!" & vbNewLine & _
+                           "Enter Renewal Key:", "Renewal Required")
+
+        If Trim(userKey) = "" Then
+            MsgBox "License required!", vbExclamation
             End
         End If
+
+        If VerifyRenewalKey(userKey) Then
+            
+            expDate = DateAdd("d", 365, GetCurrentDate())
+            Call SaveLicense(Format(expDate, "DD-MMM-YYYY"))
+            
+            MsgBox "Renewed! Valid till: " & expDate, vbInformation
+            
+        Else
+            MsgBox "Invalid Key!", vbCritical
+            End
+        End If
+
     End If
 
-End If
-
 End Function
 
-'--- Simple Encrypt ---
-Public Function EncryptStr(s As String) As String
-    Dim i As Integer
-    Dim result As String
-    For i = 1 To Len(s)
-        result = result & Chr(Asc(Mid(s, i, 1)) + 3)
-    Next i
-    EncryptStr = result
-End Function
 
-'--- Simple Decrypt ---
-Public Function DecryptStr(s As String) As String
-    Dim i As Integer
-    Dim result As String
-    For i = 1 To Len(s)
-        result = result & Chr(Asc(Mid(s, i, 1)) - 3)
-    Next i
-    DecryptStr = result
-End Function
-
-'--- Read license from hidden file ---
-Public Sub ReadLicense(expDate As String, attempts As Integer)
-    Dim fs As New FileSystemObject
-    Dim txt As TextStream
-    Dim licPath As String
-    licPath = App.Path & "\lic.dat"
-    If fs.FileExists(licPath) Then
-        SetAttr licPath, vbNormal
-        Set txt = fs.OpenTextFile(licPath, ForReading)
-        expDate = DecryptStr(txt.ReadLine)
-        txt.Close
-        SetAttr licPath, vbHidden
-    Else
-        expDate = "03/31/2027"
-        SaveLicense expDate, 0
-    End If
-End Sub
-Public Sub SaveLicense(expDate As String, attempts As Integer)
-    Dim fs As New FileSystemObject
-    Dim txt As TextStream
-    Dim licPath As String
-    licPath = App.Path & "\lic.dat"
-    On Error Resume Next
-    SetAttr licPath, vbNormal
-    On Error GoTo 0
-    Set txt = fs.CreateTextFile(licPath, True)
-    txt.WriteLine EncryptStr(expDate)
-    txt.WriteLine EncryptStr(CStr(attempts))
-    txt.Close
-    SetAttr licPath, vbHidden
-End Sub
-
-'--- Verify Renewal Key ---
+' =========================
+' ?? KEY LOGIC
+' =========================
 Public Function VerifyRenewalKey(inputKey As String) As Boolean
+
     Dim expectedKey As String
-    expectedKey = "RENEW" & Year(Date) & Format(Month(Date), "00")
+    
+    expectedKey = "RENEW" & Year(GetCurrentDate()) & Format(Month(GetCurrentDate()), "00")
+    
     If UCase(Trim(inputKey)) = expectedKey Then
         VerifyRenewalKey = True
     Else
         VerifyRenewalKey = False
     End If
+
 End Function
 
+
+' =========================
+' ?? SAVE LICENSE
+' =========================
+Public Sub SaveLicense(expDate As String)
+
+    Dim fs As New FileSystemObject
+    Dim txt As TextStream
+    Dim licPath As String
+
+    licPath = App.Path & "\lic.dat"
+
+    On Error Resume Next
+    SetAttr licPath, vbNormal
+    On Error GoTo 0
+
+    Set txt = fs.CreateTextFile(licPath, True)
+    txt.WriteLine EncryptStr(expDate)
+    txt.Close
+
+    SetAttr licPath, vbHidden
+
+End Sub
+
+
+' =========================
+' ?? READ LICENSE
+' =========================
+Public Sub ReadLicense(ByRef expDate As String)
+
+    Dim fs As New FileSystemObject
+    Dim txt As TextStream
+    Dim licPath As String
+
+    licPath = App.Path & "\lic.dat"
+
+    If fs.FileExists(licPath) Then
+        
+        On Error Resume Next
+        Err.clear
+        
+        SetAttr licPath, vbNormal
+        Set txt = fs.OpenTextFile(licPath, ForReading)
+        
+        If Not txt.AtEndOfStream Then
+            expDate = DecryptStr(txt.ReadLine)
+        Else
+            expDate = ""
+        End If
+        
+        txt.Close
+        SetAttr licPath, vbHidden
+        
+        ' ?? fallback (file corrupted or empty)
+        If Err.Number <> 0 Or expDate = "" Or Not IsDate(expDate) Then
+            expDate = Format(DateAdd("d", 30, Date), "DD-MMM-YYYY")
+            SaveLicense expDate
+        End If
+        
+        On Error GoTo 0
+        
+    Else
+        ' ?? FIRST RUN ? set expiry after 30 days
+        expDate = Format(DateAdd("d", 360, Date), "DD-MMM-YYYY")
+        SaveLicense expDate
+    End If
+
+End Sub
+
+
+' =========================
+' ?? ENCRYPT / DECRYPT
+' =========================
+Public Function EncryptStr(s As String) As String
+    Dim I As Integer, result As String
+    For I = 1 To Len(s)
+        result = result & Chr(Asc(Mid(s, I, 1)) + 3)
+    Next I
+    EncryptStr = result
+End Function
+
+Public Function DecryptStr(s As String) As String
+    Dim I As Integer, result As String
+    For I = 1 To Len(s)
+        result = result & Chr(Asc(Mid(s, I, 1)) - 3)
+    Next I
+    DecryptStr = result
+End Function
 Public Function formatstr(s As String, spaces As Integer, l_r As String, maxlen As Integer) As String
-    Dim i As Integer
+    Dim I As Integer
     Dim tempstr As String
     On Error GoTo last
     If Len(s) > maxlen Then
@@ -199,128 +279,125 @@ Public Sub pos(frm As Form)
 frm.BackColor = &HC0E0FF
 End Sub
 Sub Main()
+  ch_ = True      ' ? ADD THIS
+    chk_done = False ' ? ADD THIS
+    
+    
+    Dim licResult As String
+    licResult = check_session()
+    If licResult <> "" Then
+        MsgBox licResult, vbCritical
+        End
+    End If
+    ' *** END LICENSE CHECK ***
+    
+    
+    On Error GoTo ConnError
+    
+    Dim connStr As String
+    Dim appPath As String
+    Dim yearFolder As String
+    Dim fs As New FileSystemObject
+    
+    ' Clean app path (remove trailing backslash if present)
+    appPath = App.Path
+    If Right(appPath, 1) = "\" Then
+        appPath = Left(appPath, Len(appPath) - 1)
+    End If
+    
+    ' Get year from combo box
+    yearFolder = Trim(frmPassword.cboyrs.text)
+    
+    ' Validate year is not empty
+    If Len(yearFolder) = 0 Then
+        MsgBox "No financial year selected!", vbCritical
+        End
+    End If
+    
+    ' Build full path
+    connStr = appPath & "\" & yearFolder & "\Data.mdb"
+    
+    ' Check if year folder exists
+    If Not fs.FolderExists(appPath & "\" & yearFolder) Then
+        MsgBox "Year folder not found:" & vbNewLine & appPath & "\" & yearFolder, vbCritical
+        End
+    End If
+    
+    ' Check if Data.mdb exists inside that folder
+    If Not fs.FileExists(connStr) Then
+        MsgBox "Data.mdb not found:" & vbNewLine & connStr, vbCritical
+        End
+    End If
+    
+    ' Open connection
+    If con.State = 1 Then con.Close
+    con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & connStr
+    con.Open
+    con.CursorLocation = adUseClient
+    
+    ii
+    
+    
+    
+    '-----------------------------
+    On Error Resume Next
+    
+    con.Execute "alter table Receipt add DrCr text(10)"
+    con.Execute "alter table Receipt add PayAmt double"
+    con.Execute "alter table INVOICEA add VehicleNo text(30)"
+    con.Execute "alter table INVOICEA add TransMode text(30)"
+    con.Execute "alter table INVOICEA add DateOfSupp text(30)"
+    con.Execute "alter table Winrpt add issueno Long Integer"
+    con.Execute "alter table ItemMaster add remarks text(100)"
+    con.Execute "alter table ItemMaster add hsncode text(10)"
+    con.Execute "alter table invoiceb add hsncode text(10)"
+    con.Execute "alter table InvoicebGST add firm text(150)"
+    con.Execute "alter table itc add bgp text(30)"
+    con.Execute "alter table BookReceive add bgp text(30)"
+    con.Execute "alter table ItemMaster ALTER COLUMN TitleFarmNo TEXT(200)"
+    con.Execute "alter table titleStatent add des1 text(100)"
+    con.Execute "alter table titleStatent add binder text(100)"
+    con.Execute "alter table INVOICEA add pan text(20)"
+    con.Execute "alter table INVOICEA add email text(50)"
+    con.Execute "alter table setup1 add GST double"
+    con.Execute "alter table firm add bank text(40),Account text(40),ifsc text(40)"
+    con.Execute "alter table INVOICEA add IGSTAmt double"
+    con.Execute "alter table INVOICEA add IGSTrate double"
+    con.Execute "alter table INVOICEA add CGSTAmt double"
+    con.Execute "alter table INVOICEA add CGSTrate double"
+    con.Execute "alter table INVOICEA add SGSTAmt double"
+    con.Execute "alter table INVOICEA add SGSTrate double"
+    con.Execute "alter table INVOICEA add TotalValue double"
+    con.Execute "alter table INVOICEA add TotalGST double"
+    con.Execute "alter table INVOICEA add addless double"
+    con.Execute "alter table INVOICEA add Stcode_Billto text(5)"
+    con.Execute "alter table INVOICEA add State_Billto text(40)"
+    con.Execute "alter table INVOICEA add Stcode_shippto text(5)"
+    con.Execute "alter table INVOICEA add State_shippto text(40)"
+    con.Execute "alter table INVOICEA add PAN_Billto text(20)"
+    con.Execute "alter table INVOICEA add GSTIN_Billto text(20)"
+    con.Execute "alter table INVOICEA add PAN_shippto text(20)"
+    con.Execute "alter table INVOICEA add GSTIN_shippto text(20)"
+    con.Execute "alter table INVOICEA add Party_shippto text(60)"
+    con.Execute "alter table INVOICEA add Add_shippto text(60)"
+    con.Execute "alter table INVOICEA add placeofsupp text(40)"
+    con.Execute "alter table INVOICEA add rcharge text(10)"
+    con.Execute "alter table INVOICEB add NewRate double"
+    con.Execute "alter table INVOICEB add NewAmt double"
+    con.Execute "alter table INVOICEB add NewQty double"
+    
+    Exit Sub
 
-' On Error Resume Next
-
-
-'Dim s1 As String
-'s1 = 2
-'If con.State = 1 Then con.Close
-'If s1 = 1 Then
-' con.ConnectionString = "dsn=JKpayment"
-' 'con.ConnectionString = "filedsn=JKpayment"
-'ElseIf s1 = 2 Then
-'  con.ConnectionString = "dsn=JKpayment2013"
-'End If
- 
- 
- 
-If con.State = 1 Then con.Close
-con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & App.Path & "\" & frmPassword.cboyrs.text & "\Data.mdb"
-con.Open
-con.CursorLocation = adUseClient
- 
-
-
-ii
- 
- ''-----------------------------
- 
- On Error Resume Next
- 
- 
- con.Execute "alter table Receipt add DrCr text(10)"
- 
- con.Execute "alter table Receipt add PayAmt double"
- 
- 
- con.Execute "alter table INVOICEA add VehicleNo text(30)"
- con.Execute "alter table INVOICEA add TransMode text(30)"
- con.Execute "alter table INVOICEA add DateOfSupp text(30)"
- 
- 
- con.Execute "alter table Winrpt add issueno Long Integer"
- con.Execute "alter table ItemMaster add remarks text(100)"
- 
- con.Execute "alter table ItemMaster add hsncode text(10)"
- 
- con.Execute "alter table invoiceb add hsncode text(10)"
- 
- 
- con.Execute "alter table InvoicebGST add  firm text(150)"
- 
- 
- con.Execute "alter table itc add bgp text(30)"
- con.Execute "alter table BookReceive add bgp text(30)"
- 
- 
- 
- 
- con.Execute "alter table ItemMaster  ALTER COLUMN TitleFarmNo TEXT(200)"
- con.Execute "alter table titleStatent add des1 text(100)"
- con.Execute "alter table titleStatent add binder text(100)"
- 
- 
- 
- con.Execute "alter table INVOICEA add pan text(20)"
- con.Execute "alter table INVOICEA add email text(50)"
- con.Execute "alter table setup1 add GST double"
- con.Execute "alter table firm add bank text(40),Account text(40),ifsc text(40)"
- 
- con.Execute "alter table INVOICEA add IGSTAmt double"
- con.Execute "alter table INVOICEA add IGSTrate double"
- 
- con.Execute "alter table INVOICEA add CGSTAmt double"
- con.Execute "alter table INVOICEA add CGSTrate double"
- 
- con.Execute "alter table INVOICEA add SGSTAmt double"
- con.Execute "alter table INVOICEA add SGSTrate double"
- 
- con.Execute "alter table INVOICEA add TotalValue double"
- con.Execute "alter table INVOICEA add TotalGST double"
- 
- con.Execute "alter table INVOICEA add addless double"
- 
- con.Execute "alter table INVOICEA add Stcode_Billto text(5)"
- con.Execute "alter table INVOICEA add State_Billto text(40)"
- 
- con.Execute "alter table INVOICEA add Stcode_shippto text(5)"
- con.Execute "alter table INVOICEA add State_shippto text(40)"
- 
- 
- 
- con.Execute "alter table INVOICEA add PAN_Billto text(20)"
- con.Execute "alter table INVOICEA add GSTIN_Billto text(20)"
- 
- con.Execute "alter table INVOICEA add PAN_shippto text(20)"
- con.Execute "alter table INVOICEA add GSTIN_shippto text(20)"
- 
- con.Execute "alter table INVOICEA add Party_shippto text(60)"
- con.Execute "alter table INVOICEA add Add_shippto text(60)"
- 
- con.Execute "alter table INVOICEA add placeofsupp text(40)"
- con.Execute "alter table INVOICEA add rcharge text(10)"
- 
- con.Execute "alter table INVOICEB add NewRate double"
- con.Execute "alter table INVOICEB add NewAmt double"
- con.Execute "alter table INVOICEB add NewQty double"
- 
- 
- 
- '------------------------------
- 'frmPassword.Show
- 
-Exit Sub
-
-ErrorHandler:
-    MsgBox "Startup Error " & Err.Number & " : " & Err.Description, vbCritical
-
-    Open App.Path & "\error.log" For Append As #1
-    Print #1, Now & " - Error " & Err.Number & " : " & Err.Description
+ConnError:
+    MsgBox "Connection Error " & Err.Number & ": " & Err.Description & vbNewLine & _
+           "Path: " & connStr, vbCritical
+    Open appPath & "\error.log" For Append As #1
+    Print #1, Now & " - Error " & Err.Number & ": " & Err.Description & " | Path: " & connStr
     Close #1
-
+    End
 End Sub
 Sub DSN()
+On Error GoTo DSNError
 
 Dim FSO As FileSystemObject
 Dim f As File
@@ -345,64 +422,71 @@ If ss = "" Then
 ss = "C"
 End If
 
+Dim op_system As String
+Dim Dusername As String
+Dim dstrpath As String
 
-Dim op_system, Dusername, dstrpath As String
-
-
-Open App.Path + "\soft.mdb" For Input As #1
+Open App.Path & "\soft.mdb" For Input As #1
 Line Input #1, op_system
 Close #1
 
-
-''-----------------------------------
-Open App.Path + "\user.ini" For Input As #1
+Open App.Path & "\user.ini" For Input As #1
 Line Input #1, Dusername
 Close #1
-
-'---------------------------------
-
 
 If Right(op_system, 1) = "x" Then
    Set txt = FSO.CreateTextFile(ss & ":\Progra~1\Common~1\ODBC\DataSo~1\JKpayment.dsn")
 Else
    dstrpath = "C:\Users\" & Dusername & "\Documents\JKpayment.dsn"
-   
-   'dstrpath = "C:\Users\Acer\OneDrive\Documents\JKpayment.dsn"
-   Set txt = FSO.CreateTextFile("" & dstrpath)
+   Set txt = FSO.CreateTextFile(dstrpath)
 End If
 
+matter = matter & "[ODBC]" & vbNewLine
+matter = matter & "DRIVER=Microsoft Access Driver (*.mdb)" & vbNewLine
+matter = matter & "UID = admin" & vbNewLine
+matter = matter & "UserCommitSync = Yes" & vbNewLine
+matter = matter & "Threads = 3" & vbNewLine
+matter = matter & "afeTransactions = 0" & vbNewLine
+matter = matter & "PageTimeout = 5" & vbNewLine
+matter = matter & "MaxScanRows = 8" & vbNewLine
+matter = matter & "MaxBufferSize = 2048" & vbNewLine
+matter = matter & "FIL=MS Access" & vbNewLine
+matter = matter & "DriverId = 25" & vbNewLine
+matter = matter & "DefaultDir=" & App.Path & vbNewLine
+matter = matter & "DBQ=" & App.Path & "\" & frmPassword.cboyrs.text & "\Data.mdb"
 
+txt.Write matter
+txt.Close
 
-'Set txt = FSO.CreateTextFile(ss & ":\Progra~1\Common~1\ODBC\DataSo~1\JKpayment.dsn")
-                matter = matter & "[ODBC]" & vbNewLine
-                matter = matter & "DRIVER=Microsoft Access Driver (*.mdb)" & vbNewLine
-                matter = matter & "UID = admin" & vbNewLine
-                matter = matter & "UserCommitSync = Yes" & vbNewLine
-                matter = matter & "Threads = 3" & vbNewLine
-                matter = matter & "afeTransactions = 0" & vbNewLine
-                matter = matter & "PageTimeout = 5" & vbNewLine
-                matter = matter & "MaxScanRows = 8" & vbNewLine
-                matter = matter & "MaxBufferSize = 2048" & vbNewLine
-                matter = matter & "FIL=MS Access" & vbNewLine
-                matter = matter & "DriverId = 25" & vbNewLine
-                matter = matter & "DefaultDir=" & App.Path & vbNewLine
-                matter = matter & "DBQ=" & App.Path & "\" & frmPassword.cboyrs.text & "\Data.mdb"
-    txt.Write matter
-    txt.Close
-    
-    
-   Call Main
-    
-End Sub
-Public Function str_val(j As TextBox, i As Integer) As Boolean
+Call Main
+
+Exit Sub    ' <-- THIS stops normal flow from falling into error handler
+
+DSNError:   ' <-- THIS must be INSIDE the sub, before End Sub
+    Dim errMsg As String
+    errMsg = "Error in DSN()" & vbNewLine & _
+             "Error No : " & Err.Number & vbNewLine & _
+             "Description : " & Err.Description & vbNewLine & vbNewLine & _
+             "App.Path = " & App.Path & vbNewLine & _
+             "Year Selected = " & frmPassword.cboyrs.text & vbNewLine & _
+             "Username = " & Dusername & vbNewLine & _
+             "OS flag = " & op_system
+    MsgBox errMsg, vbCritical, "Startup Failed"
+    Open App.Path & "\error.log" For Append As #2
+    Print #2, Now & " | " & errMsg
+    Close #2
+    End
+
+End Sub     ' <-- only ONE End Sub at the very bottom
+Public Function str_val(j As TextBox, I As Integer) As Boolean
  
- If (i >= 65 And i <= 90) Or (i >= 97 And i <= 122) Or (i = 13) Or (i = 32) Or (i = 8) Then
+ If (I >= 65 And I <= 90) Or (I >= 97 And I <= 122) Or (I = 13) Or (I = 32) Or (I = 8) Then
   str_val = True
   Else
   str_val = False
   End If
 End Function
-Public Function val_int(i As TextBox, j As Integer) As Boolean
+Public Function val_int(I As TextBox, j As Integer) As Boolean
 Dim a As Boolean
 If j >= 48 And j <= 57 Or j = 8 Or j = 13 Then
 
@@ -507,7 +591,7 @@ End Sub
 Sub popuplist2(ByVal ST As String, ByRef cn1 As ADODB.Connection, Optional ar As Integer, Optional font2 As String)
 
 On Error Resume Next
-Dim i As Integer
+Dim I As Integer
 Dim m As Integer
 
 Set rs1 = New ADODB.Recordset
@@ -530,22 +614,22 @@ If rs1.RecordCount > 0 Then
         PopUpValue2 = ""
         PopUpValue3 = ""
         
-            For i = 1 To ar
-            popuplist.ListView1.ColumnHeaders.Add i, , rs1.Fields(i - 1).Name
-            If i = 1 Then
-            If rs1.Fields(i - 1).Name = "name" Then
-              popuplist.ListView1.ColumnHeaders(i).Width = 10000
+            For I = 1 To ar
+            popuplist.ListView1.ColumnHeaders.Add I, , rs1.Fields(I - 1).Name
+            If I = 1 Then
+            If rs1.Fields(I - 1).Name = "name" Then
+              popuplist.ListView1.ColumnHeaders(I).Width = 10000
             Else
-            popuplist.ListView1.ColumnHeaders(i).Width = 2500
+            popuplist.ListView1.ColumnHeaders(I).Width = 2500
             End If
-            ElseIf i = 3 Then
-               popuplist.ListView1.ColumnHeaders(i).Width = 3000
+            ElseIf I = 3 Then
+               popuplist.ListView1.ColumnHeaders(I).Width = 3000
             'Else
             '   popuplist.ListView1.ColumnHeaders(i).Width = 1400
             End If
             
             
-        Next i
+        Next I
         
         
          If font2 = "e" Then
