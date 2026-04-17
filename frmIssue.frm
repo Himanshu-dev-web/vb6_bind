@@ -655,7 +655,7 @@ Begin VB.Form frmIssue
       EndProperty
       CalendarForeColor=   16711680
       CalendarTitleForeColor=   16711680
-      Format          =   76152833
+      Format          =   150077441
       CurrentDate     =   39500
    End
    Begin VB.TextBox Text2 
@@ -1850,53 +1850,59 @@ End If
 End Sub
 
 Private Sub cboItem_KeyDown(KeyCode As Integer, Shift As Integer)
-     If KeyCode = 13 Then
-        'cellposi
-        'If cboItem.Text = "" Then
-           'VsFrame.Visible = False
-           'cmdSave_2.SetFocus
-        '   Exit Sub
-        'End If
-        
+
+    If KeyCode = 13 Then
+
         vs.TextMatrix(vs.RowSel, 3) = cboItem.text
-         
+
         If rs.State = 1 Then rs.Close
         rs.Open "select BookFarmNo,BookRate,TitleRate from [ItemMaster] where ItemName='" & Trim(vs.TextMatrix(vs.RowSel, 3)) & "'", con
+
         If rs.EOF = False Then
-              
-            '======================================================
-                cboItem.Visible = False
-                vs.SetFocus
-                
-                sendkeys "{right}"
-            '=======================================================
-              
+
+            '================ UI handling =================
+            cboItem.Visible = False
+            vs.SetFocus
+            sendkeys "{RIGHT}"
+            '================================================
+
+            '================ FIX START =================
             If vs.TextMatrix(vs.RowSel, 1) = "Book" Then
-              vs.TextMatrix(vs.RowSel, 4) = rs.Fields(0).Value & ""
-              vs.TextMatrix(vs.RowSel, 5) = rs!BookRate & ""
+
+                Dim farmVal As String
+                farmVal = rs.Fields(0).Value & ""
+
+                If IsNumeric(farmVal) Then
+                    vs.TextMatrix(vs.RowSel, 4) = Val(farmVal)
+                Else
+                    vs.TextMatrix(vs.RowSel, 4) = 0   'fallback to avoid crash
+                End If
+
+                vs.TextMatrix(vs.RowSel, 5) = rs!BookRate & ""
+
             ElseIf (vs.TextMatrix(vs.RowSel, 1) = "Title" Or vs.TextMatrix(vs.RowSel, 1) = "Stich") Then
-             vs.TextMatrix(vs.RowSel, 5) = rs!TitleRate & ""
+
+                vs.TextMatrix(vs.RowSel, 5) = rs!TitleRate & ""
+
             Else
-             vs.TextMatrix(vs.RowSel, 5) = rs!TitleRate & ""
+
+                vs.TextMatrix(vs.RowSel, 5) = rs!TitleRate & ""
+
             End If
-              
-              'vs.TextMatrix(vs.RowSel, 4) = (IIf(vs.TextMatrix(vs.RowSel, 1) = "", 0, vs.TextMatrix(vs.RowSel, 1)) * IIf(vs.TextMatrix(vs.RowSel, 2) = "", 0, vs.TextMatrix(vs.RowSel, 2)) + IIf(vs.TextMatrix(vs.RowSel, 3) = "", 0, vs.TextMatrix(vs.RowSel, 3)))
+            '================ FIX END =================
+
         Else
             Exit Sub
-            
         End If
 
-        
-        
-        
-        
         vs.SetFocus
-        
-     ElseIf KeyCode = 27 Then
-       
-          cboItem.Visible = False
-        
-     End If
+
+    ElseIf KeyCode = 27 Then
+
+        cboItem.Visible = False
+
+    End If
+
 End Sub
 Sub saveInMaster()
          On Error Resume Next
@@ -2534,10 +2540,15 @@ End Sub
 
 Private Sub cmdPrint_7_Click()
 
-
+On Error GoTo err1
 
 CR.Reset
 CR.ReportFileName = App.Path & "/CHALLAN.rpt"
+
+' ? ADD THIS (check full path)
+' MsgBox App.Path & "\" & frmPassword.cboyrs.text & "\Data.mdb"
+' CR.Connect = "Driver={Microsoft Access Driver (*.mdb)};DBQ=" & App.Path & "\" & frmPassword.cboyrs.text & "\Data.mdb;"
+
 CR.ReplaceSelectionFormula "{invoiceA.invoiceno}=" & txtHeating.text & " and {invoiceA.subledger}='" & txtParty.text & "'"
 
 
@@ -2574,16 +2585,26 @@ End If
 
 CR.WindowShowPrintSetupBtn = True
 CR.WindowState = crptMaximized
+
 CR.Action = 1
 
+Exit Sub
+
+err1:
+MsgBox "ERROR: " & Err.Description
 End Sub
 
 Private Sub cmdPrint_GST_Click()
-
+On Error GoTo err1
 FNAME = txtParty.text
 
 CR.Reset
 CR.ReportFileName = App.Path & "/CHALLANGST.rpt"
+
+
+' ? ADD THIS (check full path)
+' MsgBox App.Path & "\" & frmPassword.cboyrs.text & "\Data.mdb"
+' CR.Connect = "Driver={Microsoft Access Driver (*.mdb)};DBQ=" & App.Path & "\" & frmPassword.cboyrs.text & "\Data.mdb;"
 CR.ReplaceSelectionFormula "{invoiceA.invoiceno}=" & txtHeating.text & " and {InvoicebGST.firm}='" & txtParty.text & "'"
 'If (txtvatamt) > 0 Then
 wrd = toword(txtNet.text)
@@ -2626,6 +2647,11 @@ CR.WindowShowPrintSetupBtn = True
 CR.WindowState = crptMaximized
 CR.Action = 1
 
+
+Exit Sub
+
+err1:
+MsgBox "ERROR: " & Err.Description
 End Sub
 Private Sub cmdSave_2_Click()
 
@@ -4174,3 +4200,4 @@ ElseIf vs.Col = 4 Then
 End If
 
 End Sub
+

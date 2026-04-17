@@ -216,7 +216,7 @@ Public Sub ReadLicense(ByRef expDate As String)
         
         ' ?? fallback (file corrupted or empty)
         If Err.Number <> 0 Or expDate = "" Or Not IsDate(expDate) Then
-            expDate = Format(DateAdd("d", 30, Date), "DD-MMM-YYYY")
+            expDate = Format(DateAdd("d", 360, Date), "DD-MMM-YYYY")
             SaveLicense expDate
         End If
         
@@ -235,22 +235,22 @@ End Sub
 ' ?? ENCRYPT / DECRYPT
 ' =========================
 Public Function EncryptStr(s As String) As String
-    Dim I As Integer, result As String
-    For I = 1 To Len(s)
-        result = result & Chr(Asc(Mid(s, I, 1)) + 3)
-    Next I
+    Dim i As Integer, result As String
+    For i = 1 To Len(s)
+        result = result & Chr(Asc(Mid(s, i, 1)) + 3)
+    Next i
     EncryptStr = result
 End Function
 
 Public Function DecryptStr(s As String) As String
-    Dim I As Integer, result As String
-    For I = 1 To Len(s)
-        result = result & Chr(Asc(Mid(s, I, 1)) - 3)
-    Next I
+    Dim i As Integer, result As String
+    For i = 1 To Len(s)
+        result = result & Chr(Asc(Mid(s, i, 1)) - 3)
+    Next i
     DecryptStr = result
 End Function
 Public Function formatstr(s As String, spaces As Integer, l_r As String, maxlen As Integer) As String
-    Dim I As Integer
+    Dim i As Integer
     Dim tempstr As String
     On Error GoTo last
     If Len(s) > maxlen Then
@@ -478,15 +478,15 @@ DSNError:   ' <-- THIS must be INSIDE the sub, before End Sub
     End
 
 End Sub     ' <-- only ONE End Sub at the very bottom
-Public Function str_val(j As TextBox, I As Integer) As Boolean
+Public Function str_val(j As TextBox, i As Integer) As Boolean
  
- If (I >= 65 And I <= 90) Or (I >= 97 And I <= 122) Or (I = 13) Or (I = 32) Or (I = 8) Then
+ If (i >= 65 And i <= 90) Or (i >= 97 And i <= 122) Or (i = 13) Or (i = 32) Or (i = 8) Then
   str_val = True
   Else
   str_val = False
   End If
 End Function
-Public Function val_int(I As TextBox, j As Integer) As Boolean
+Public Function val_int(i As TextBox, j As Integer) As Boolean
 Dim a As Boolean
 If j >= 48 And j <= 57 Or j = 8 Or j = 13 Then
 
@@ -591,7 +591,7 @@ End Sub
 Sub popuplist2(ByVal ST As String, ByRef cn1 As ADODB.Connection, Optional ar As Integer, Optional font2 As String)
 
 On Error Resume Next
-Dim I As Integer
+Dim i As Integer
 Dim m As Integer
 
 Set rs1 = New ADODB.Recordset
@@ -614,22 +614,22 @@ If rs1.RecordCount > 0 Then
         PopUpValue2 = ""
         PopUpValue3 = ""
         
-            For I = 1 To ar
-            popuplist.ListView1.ColumnHeaders.Add I, , rs1.Fields(I - 1).Name
-            If I = 1 Then
-            If rs1.Fields(I - 1).Name = "name" Then
-              popuplist.ListView1.ColumnHeaders(I).Width = 10000
+            For i = 1 To ar
+            popuplist.ListView1.ColumnHeaders.Add i, , rs1.Fields(i - 1).Name
+            If i = 1 Then
+            If rs1.Fields(i - 1).Name = "name" Then
+              popuplist.ListView1.ColumnHeaders(i).Width = 10000
             Else
-            popuplist.ListView1.ColumnHeaders(I).Width = 2500
+            popuplist.ListView1.ColumnHeaders(i).Width = 2500
             End If
-            ElseIf I = 3 Then
-               popuplist.ListView1.ColumnHeaders(I).Width = 3000
+            ElseIf i = 3 Then
+               popuplist.ListView1.ColumnHeaders(i).Width = 3000
             'Else
             '   popuplist.ListView1.ColumnHeaders(i).Width = 1400
             End If
             
             
-        Next I
+        Next i
         
         
          If font2 = "e" Then
